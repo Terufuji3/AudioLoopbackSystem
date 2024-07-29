@@ -20,7 +20,6 @@
         let mediaStreamSource;
         let delayNode;
         let mediaRecorder;
-        let audioChunks = [];
 
         async function start() {
             const delayTime = parseFloat(document.getElementById('delay').value);
@@ -39,33 +38,14 @@
             // Connect nodes
             mediaStreamSource.connect(delayNode);
             delayNode.connect(audioContext.destination);
-
-            // Start recording
-            // mediaRecorder = new MediaRecorder(stream);
-            
-            /*
-            mediaRecorder.ondataavailable = event => {
-                audioChunks.push(event.data);
-                console.log('Data available');
-                if (mediaRecorder.state == 'inactive') {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                    const audioUrl = URL.createObjectURL(audioBlob);
-                    const audio = new Audio(audioUrl);
-                    // audio.play();
-                }
-            };
-            */
-            // mediaRecorder.start();
         }
 
         function stop() {
-            // mediaRecorder.stop();
             mediaStreamSource.disconnect();
             delayNode.disconnect();
             audioContext.close();
-            audioChunks = [];
         }
- 
+        
     </script>
 </body>
 </html>
