@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Delay</title>
+</head>
+<body>
+    <h1>Audio Delay System</h1>
+    <button id="start">Start</button>
+    <button id="stop">Stop</button>
+    <label for="delay">Delay (seconds):</label>
+    <input type="number" id="delay" value="0.3" step="0.1">
+
+    <script>
+        document.getElementById('start').addEventListener('click', start);
+        document.getElementById('stop').addEventListener('click', stop);
+
+        let audioContext;
+        let mediaStreamSource;
+        let delayNode;
+        let mediaRecorder;
+        let audioChunks = [];
+
+        async function start() {
+            const delayTime = parseFloat(document.getElementById('delay').value);
+
+            // Create audio context
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+            // Get user media
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaStreamSource = audioContext.createMediaStreamSource(stream);
+
+            // Create delay node
+            delayNode = audioContext.createDelay();
+            delayNode.delayTime.value = delayTime;
+
+            // Connect nodes
+            mediaStreamSource.connect(delayNode);
+            delayNode.connect(audioContext.destination);
+
+            // Start recording
+            // mediaRecorder = new MediaRecorder(stream);
+            
+            /*
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+                console.log('Data available');
+                if (mediaRecorder.state == 'inactive') {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audio = new Audio(audioUrl);
+                    // audio.play();
+                }
+            };
+            */
+            // mediaRecorder.start();
+        }
+
+        function stop() {
+            // mediaRecorder.stop();
+            mediaStreamSource.disconnect();
+            delayNode.disconnect();
+            audioContext.close();
+            audioChunks = [];
+        }
+ 
+    </script>
+</body>
+</html>
+
